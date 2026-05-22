@@ -1,0 +1,6 @@
+{
+  "name": "version-orchestrator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub composite action for automated version bumps, changelog generation, and releases"
+}

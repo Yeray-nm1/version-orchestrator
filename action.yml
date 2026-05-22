@@ -1,0 +1,25 @@
+name: Bump and Release
+description: Bump version, generate changelog, create tag and GitHub release
+author: Yeray-nm1
+
+inputs:
+  bump:
+    description: Type of version bump (major, minor, or patch)
+    required: true
+    default: patch
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: ${{ github.action_path }}/scripts/bump.sh
+      env:
+        BUMP: ${{ inputs.bump }}
+
+    - shell: bash
+      run: ${{ github.action_path }}/scripts/changelog.sh
+
+    - shell: bash
+      run: ${{ github.action_path }}/scripts/tag.sh
+      env:
+        GH_TOKEN: ${{ github.token }}
