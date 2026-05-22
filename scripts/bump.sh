@@ -7,7 +7,7 @@ echo "Bumping version ($BUMP)..."
 
 if [ -f "pom.xml" ]; then
   CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout 2>/dev/null)
-  BASE_VERSION=$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//' | sed 's/-dev\.[0-9]*//')
+  BASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
 
   MAJOR=$(echo "$BASE_VERSION" | cut -d. -f1)
   MINOR=$(echo "$BASE_VERSION" | cut -d. -f2)
