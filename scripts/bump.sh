@@ -22,11 +22,19 @@ if [ -f "pom.xml" ]; then
   NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
   mvn -B versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
 
-elif [ -f "pnpm-lock.yaml" ]; then
-  pnpm version "$BUMP" --no-git-tag-version
-
-elif [ -f "package-lock.json" ] || [ -f "package.json" ]; then
-  npm version "$BUMP" --no-git-tag-version
+elif [ -f "package.json" ]; then
+  node -e "
+    const p = JSON.parse(require('fs').readFileSync('package.json','utf8'));
+    const base = p.version.replace(/-.*$/, '');
+    let [major, minor, patch] = base.split('.').map(Number);
+    const bump = '$BUMP';
+    if (bump === 'major') { major++; minor = 0; patch = 0; }
+    else if (bump === 'minor') { minor++; patch = 0; }
+    else if (bump === 'patch') { patch++; }
+    p.version = major + '.' + minor + '.' + patch;
+    require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');
+    console.log('v' + p.version);
+  "
 
 else
   echo "No supported project detected (pom.xml or package.json)"
